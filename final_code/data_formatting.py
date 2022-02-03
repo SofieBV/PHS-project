@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def import_datasets(names):
     """
@@ -65,3 +66,15 @@ def add_categories(dataframe, groupings):
     dataframe = dataframe.groupby(dataframe.index.names).sum()
 
     return dataframe
+
+def extract_data(dataframe, indices, levels, names):
+    output = []
+    for name in names:
+        data = dataframe.xs(indices,level=levels)[name].reset_index().to_numpy().T
+        data = data.astype('object')
+        data[0,:] = data[0,:].astype(np.str)
+        output.append(data)
+    if len(output)==1:
+        return output[0]
+    else:
+        return output

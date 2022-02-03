@@ -7,7 +7,7 @@ def import_datasets(names):
     """
 
     dataframes = []
-    time_names = ['Month', 'MonthEnding', 'Quarter', 'QuarterEnding', 'Date', 'Year']
+    time_names = ['Month', 'Quarter', 'QuarterEnding', 'Date', 'Year']
     region_names = ['HB', 'HBT', 'Country']
 
     for name in names:
@@ -16,12 +16,17 @@ def import_datasets(names):
         
         indices = []
         for col in dataframe.columns:
-            if col in time_names:
+            if col=='MonthEnding':
+                dataframe=monthending_to_month(dataframe)
+                indices.append('Month')
+            elif col in time_names:
                 time = col
                 dataframe = dataframe.astype({col: 'object'})
-            if col in region_names:
+                indices.append(col)
+            elif col in region_names:
                 region = col
-            if dataframe[col].dtype == 'object':
+                indices.append(col)
+            elif dataframe[col].dtype == 'object':
                 indices.append(col)
                 
         dataframe = dataframe.sort_values(by = [time, region]).reset_index(drop=True).set_index(indices)        
@@ -30,8 +35,51 @@ def import_datasets(names):
 
     return dataframes
 
+def monthending_to_month(dataframe):
+    monthendings = list(map(str,dataframe['MonthEnding']))
+    month = monthendings.copy()
+    for i in range(len(monthendings)):
+        month[i] = monthendings[i][:-2]
+    dataframe['MonthEnding'] = month
+    dataframe = dataframe.rename(columns={'MonthEnding':'Month'})
+    
+    return dataframe
+
+def day_to_month(dataframe):
+    indices = dataframe.index.names
+    dataframe = dataframe.reset_index()
+    dates = list(map(str,dataframe['Date']))
+    month = dates.copy()
+    for i in range(len(dates)):
+        month[i] = dates[i][:-2]
+    dataframe['Date'] = month
+    dataframe = dataframe.set_index(indices).rename_axis(index={'Date':'Month'})
+    dataframe = dataframe.groupby(dataframe.index.names).sum()
+
+    return dataframe
 
 def month_to_quarter(dataframe):
+    indices = dataframe.index.names
+    dataframe = dataframe.reset_index()
+    months = list(map(str,dataframe['Month']))
+    quarter = months.copy()
+    for i in range(len(months)):
+        if int(months[i][-1]) <= 3:
+            quarter[i] = months[i][:-2]+'Q1'
+        elif int(months[i][-1]) <= 6:
+            quarter[i] = months[i][:-2]+'Q2' 
+        elif int(months[i][-1]) <= 9:
+            quarter[i] = months[i][:-2]+'Q3'
+        else:
+            quarter[i] = months[i][:-2]+'Q4'  
+    dataframe['Month'] = quarter
+    dataframe = dataframe.set_index(indices).rename_axis(index={'Month':'Quarter'})
+    dataframe = dataframe.groupby(dataframe.index.names).sum()
+    return dataframe
+
+def day_to_quarter(dataframe):
+    dataframe = day_to_month(dataframe)
+    dataframe = month_to_quarter(dataframe)
     return dataframe
 
 def HB_to_areas(dataframe):

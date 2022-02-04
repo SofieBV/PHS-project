@@ -1,22 +1,21 @@
 import changefinder
 import ruptures as rpt
 import matplotlib.pyplot as plt
-from matplotlib import ticker
 import numpy as np
 from rupture_display import display_modified
 
 #CHANGEFINDER
 
-def change_finder(points):
+def change_finder(points, title):
     xpoints = points[1,:]
-    f, (ax1, ax2) = plt.subplots(2, 1)
-    f.subplots_adjust(hspace=0.4)
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    fig.subplots_adjust(hspace=0.4)
     ax1.plot(xpoints)
     ax1.set_title("data point")
-    ax1.set_xticks(np.linspace(min(ax1.get_xticks()), max(ax1.get_xticks()),len(points[0,:])))
+    ax1.set_xticks(np.linspace(0, len(points[0,:]),len(points[0,:])))
     ax1.set_xticklabels(points[0,:])
     ax1.tick_params('x',labelrotation=45)
-    every_nth = 3
+    every_nth = 4
     for n, label in enumerate(ax1.xaxis.get_ticklabels()):
             if n % every_nth != 0:
                 label.set_visible(False)
@@ -26,13 +25,16 @@ def change_finder(points):
     scores = [cf.update(p) for p in xpoints]
     ax2.plot(scores)
     ax2.set_title("anomaly score")
-    ax2.set_xticks(np.linspace(min(ax1.get_xticks()), max(ax1.get_xticks()),len(points[0,:])))
+    ax2.set_xticks(np.linspace(0, len(points[0,:]),len(points[0,:])))
     ax2.set_xticklabels(points[0,:])
     ax2.tick_params('x',labelrotation=45)
     for n, label in enumerate(ax2.xaxis.get_ticklabels()):
             if n % every_nth != 0:
                 label.set_visible(False)
-    plt.savefig('results/changefinder.png')
+    fig.tight_layout()
+    fig.suptitle(title, size=16)
+    fig.subplots_adjust(top=0.85)
+    plt.savefig('results/changefinder_{}.png'.format(title))
     plt.show() 
 
 #RUPTURES PACKAGE
@@ -111,7 +113,7 @@ def all_methods(points, title):
     axs[2].set_title('Window-based Search Method')
     axs[3].set_title('Dynamic Programming Search Method')
 
-    axs[3].set_xticks(np.linspace(min(axs[3].get_xticks()), max(axs[3].get_xticks()),len(points[0,:])))
+    axs[3].set_xticks(np.linspace(0, len(points[0,:]),len(points[0,:])))
     axs[3].set_xticklabels(points[0,:])
     axs[3].tick_params('x',labelrotation=45)
     every_nth = 4

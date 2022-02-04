@@ -84,7 +84,7 @@ def dynamic_program(points, title='Change Point Detection: Dynamic Programming S
     plt.savefig('results/dynamic_programming.png')
     plt.show()
 
-def all_methods(points, title):
+def all_methods(points, title, nr = 3):
     xpoints = points[1,:]
     
     model="rbf"
@@ -93,15 +93,15 @@ def all_methods(points, title):
 
     model = "l2"  
     algo = rpt.Binseg(model=model).fit(xpoints)
-    my_bkps_bs = algo.predict(n_bkps=5)
+    my_bkps_bs = algo.predict(n_bkps=nr)
     
     model = "l2"  
     algo = rpt.Window(width=10, model=model).fit(xpoints)
-    my_bkps_wb = algo.predict(n_bkps=5)
+    my_bkps_wb = algo.predict(n_bkps=nr)
 
     model = "l1"  
     algo = rpt.Dynp(model=model, min_size=3, jump=5).fit(xpoints)
-    my_bkps_dp = algo.predict(n_bkps=5)
+    my_bkps_dp = algo.predict(n_bkps=nr)
 
     all_xpoints = np.concatenate(([xpoints], [xpoints],[xpoints],[xpoints]),axis=0).T
     all_results = [result, my_bkps_bs, my_bkps_wb, my_bkps_dp]

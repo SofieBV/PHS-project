@@ -21,7 +21,7 @@ def import_datasets(names):
                 indices.append('Month')
             elif col in time_names:
                 time = col
-                dataframe = dataframe.astype({col: 'object'})
+                dataframe = dataframe.astype({col: 'string'})
                 indices.append(col)
             elif col in region_names:
                 region = col

@@ -1,4 +1,4 @@
-from data_formatting import day_to_month, day_to_quarter, import_datasets, time_interval, add_categories, \
+from final_code.fcts_data_formatting import day_to_month, day_to_quarter, import_datasets, time_interval, add_categories, \
                                 HB_to_areas, extract_data, day_to_quarter, month_to_quarter
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,7 +19,7 @@ d31 = extract_data(data31, ('all_reg', 'all_reg','new_CT'), ['HB', 'HBT','Cancer
 covid = day_to_quarter(covid)
 print(covid)
 
-operations = time_interval(operations, [201807, 202107])
+operations = time_interval(operations, ['201807', '202107'])
 operations = HB_to_areas(operations)
 print(operations.index.names)
 operations.info()

@@ -54,7 +54,7 @@ for area in ['NCA', 'SCAN', 'WOSCAN']:
         for n, label in enumerate(ax[i].xaxis.get_ticklabels()):
             if n % every_nth != 0:
                 label.set_visible(False)
-plt.savefig('some_datasets_plotted_monthly.png')
+plt.savefig('results/some_datasets_plotted_monthly.png')
 plt.show()
 
 ## now plot things quarterly
@@ -116,5 +116,5 @@ for area in ['NCA', 'SCAN', 'WOSCAN']:
         for n, label in enumerate(ax[i].xaxis.get_ticklabels()):
             if n % every_nth != 0:
                 label.set_visible(False)
-plt.savefig('some_datasets_plotted_quarterly.png')
+plt.savefig('results/some_datasets_plotted_quarterly.png')
 plt.show()

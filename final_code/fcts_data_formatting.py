@@ -123,19 +123,27 @@ def time_interval(dataframes, interval, islist=False):
     else:
         return new_dataframes
 
-def add_categories(dataframe, groupings):
+def add_categories(dataframes, groupings, islist=False):
     """
     add certain categories of the dataframe
     """
-    dic={}
-    for key,value in groupings.items():
-        for x in value:
-            dic[x] = key
+    if not islist:
+        dataframes = [dataframes]
+    new_dataframes=[]
+    for dataframe in dataframes:
+        dic={}
+        for key,value in groupings.items():
+            for x in value:
+                dic[x] = key
 
-    dataframe = dataframe.rename(index=dic)
-    dataframe = dataframe.groupby(dataframe.index.names).sum()
+        dataframe = dataframe.rename(index=dic)
+        dataframe = dataframe.groupby(dataframe.index.names).sum()
+        new_dataframes.append(dataframe)
 
-    return dataframe
+    if len(new_dataframes)==1:
+        return new_dataframes[0]
+    else:
+        return new_dataframes
 
 def extract_data(dataframe, indices, levels, names):
     output = []

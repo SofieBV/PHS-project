@@ -12,7 +12,10 @@ def import_datasets(names):
 
     for name in names:
         dataframe = pd.read_csv('data/{}.csv'.format(name), engine='python')
-        dataframe = dataframe.dropna(axis=1)
+        if name == 'cancerdata_fixed_sofie':
+            dataframe = dataframe.dropna(axis=0)
+        else:
+            dataframe = dataframe.dropna(axis=1)
         
         indices = []
         for col in dataframe.columns:

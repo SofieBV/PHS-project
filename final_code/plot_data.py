@@ -3,7 +3,7 @@ from fcts_data_formatting import day_to_month, day_to_quarter, import_datasets, 
 import numpy as np
 import matplotlib.pyplot as plt
 
-data31, data62, operations, diag, covid, beds, emerg = import_datasets(['31DayData', '62DayData', 'cancellations_by_board_november_2021', \
+data31, data62, operations, diag, covid, beds, emerg = import_datasets(['31DayDataUpdate', '62DayDataUpdate', 'cancellations_by_board_november_2021', \
                                                          'diagnostics_by_board_september_2021', 'covid_2022', 'hospital_beds', \
                                                              'monthly_ae_waitingtimes_202111'])
 

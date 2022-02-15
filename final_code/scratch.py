@@ -3,7 +3,7 @@ from fcts_data_formatting import day_to_month, day_to_quarter, import_datasets, 
 import numpy as np
 import matplotlib.pyplot as plt
 
-data31, data62, cancer = import_datasets(['31DayData', '62DayData', 'cancerdata_fixed_sofie'])
+data31, data62, cancer = import_datasets(['31DayDataUpdate', '62DayDataUpdate', 'cancerdata_fixed_sofie'])
 cancer = cancer.groupby(cancer.index.names).sum()
 cancer = month_to_quarter(cancer)
 

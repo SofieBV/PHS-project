@@ -12,15 +12,17 @@ def import_datasets(names):
 
     for name in names:
         dataframe = pd.read_csv('data/{}.csv'.format(name), engine='python')
+        print(dataframe)
         if name == 'cancerdata_fixed_sofie':
             dataframe = dataframe.dropna(axis=0)
         else:
             dataframe = dataframe.dropna(axis=1)
-        
+
         indices = []
         for col in dataframe.columns:
             if col=='MonthEnding':
                 dataframe=monthending_to_month(dataframe)
+                time = 'Month'
                 indices.append('Month')
             elif col in time_names:
                 time = col

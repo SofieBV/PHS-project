@@ -12,7 +12,6 @@ def import_datasets(names):
 
     for name in names:
         dataframe = pd.read_csv('data/{}.csv'.format(name), engine='python')
-        print(dataframe)
         if name == 'cancerdata_fixed_sofie':
             dataframe = dataframe.dropna(axis=0)
         else:

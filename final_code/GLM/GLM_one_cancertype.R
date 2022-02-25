@@ -44,10 +44,10 @@ data$rates <- data$NumberOfEligibleReferrals62DayStandard / data$PopSize
 
 #--------- Let's try to make a plot showing fitted data #--------- 
 
-data_plot <- subset(data, HB=='S08000024')
+data_plot <- subset(data, HB=='S08000015')
 
 plot(data_plot$Date, data_plot$rates,
-     main="Nr of Referrals in NHS Lothian for Breast Cancer",
+     main="Nr of Referrals in NHS Ayreshire and Arran for Lung Cancer",
      ylab="nr of referrals", xlab='time',
      type="l",
      col="blue", xaxt='n') 

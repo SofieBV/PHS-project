@@ -49,7 +49,7 @@ data$rates <- data$NumberOfEligibleReferrals62DayStandard / data$PopSize
 data_plot <- subset(subset(data, HB=='S08000024'), CancerType=='Breast')
 
 plot(data_plot$Date, data_plot$rates,
-     main="Nr of Referrals in NHS Lothian for Lung Cancer",
+     main="Nr of Referrals in NHS Lothian for Breast Cancer",
      ylab="nr of referrals", xlab='time',
      type="l",
      col="blue", xaxt='n') 

@@ -1,8 +1,8 @@
 #-----------------------------------------------
 
-data <- read.csv('../data/62days.csv', header = TRUE) 
+data <- read.csv('../data/31days.csv', header = TRUE) 
 
-data2 <- read.csv("../data/31days.csv", header = TRUE) 
+data2 <- read.csv("../data/62days.csv", header = TRUE) 
 
 data <- as.data.frame (data)
 

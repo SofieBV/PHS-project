@@ -27,8 +27,8 @@ data$DateSquared <- (data$Date)^2
 
 #--------- log-link is chosen by default in Poisson distribution. #--------- 
 
-mod.1 <- glm( NumberOfEligibleReferrals62DayStandard ~  offset(logLE) + HB + CancerType + Date + DateSquared +
-                JustPandemic +Pandemic_cat, data = data, family=family1 )
+mod.1 <- glm( NumberOfEligibleReferrals62DayStandard ~  offset(logLE) + HB + CancerType + Date +
+                JustPandemic  +JustPandemic:HB +JustPandemic:CancerType, data = data, family=family1 )
 
 summary(mod.1)
 
@@ -48,14 +48,14 @@ results <- cbind(results, '2.5%'=ci[,1])
 results <- cbind(results, '97.5%'=ci[,2])
 results <- cbind(results, 'AIC'=AIC(mod.1))
 results <- cbind(results, 'BIC'=BIC(mod.1))
-write.csv(results,"results/62_eligible_Pop_Time2_Pan2_HB_CT.csv")
+write.csv(results,"results/631_eligible_Pop_Time_Pan_HB_CT_CTPAN_HBPAN.csv")
 
 #--------- Extending the data by adding two new columns which show fitted data
 
 data <- cbind( data, 'fitted'=mod.1.predict/data$PopSize )
 #data <- cbind( data, mod.1.predict )
 
-data$rates <- data$NumberOfEligibleReferrals62DayStandard / data$PopSize
+data$rates <- data$NumberOfEligibleReferrals31DayStandard / data$PopSize
 
 #--------- Let's try to make a plot showing fitted data #--------- 
 
@@ -72,11 +72,60 @@ legend("topleft",
        c("actual","fitted"),
        fill=c("blue","red"))
 
-#--------- Let's try to make a plot of all the  coefficients #--------- 
-
+#--------- Let's try to make a plot of all the interaction coefficients #--------- 
 region_names <- c('NHS Borders','NHS Dumfries and Galloway','NHS Forth Valley','NHS Grampian',
                   'NHS Highland','NHS Lothian','NHS Orkney','NHS Shetland','NHS Western Isles','NHS Fife','NHS Tayside',
                   'NHS Greater Glasgow and Clyde','NHS Lanarkshire','NHS Ayrshire and Arran')
+
+region_pan_coef <- coef(mod.1)[26:38]
+region_pan_coef['HBS08000015:JustPandemic'] <- 0
+region_pan_ci_min <- ci[26:38,1]
+region_pan_ci_max <- ci[26:38,2]
+region_pan_ci_min['HBS08000015:JustPandemic'] <- 0
+region_pan_ci_max['HBS08000015:JustPandemic'] <- 0
+region_pan_ci_min <- region_pan_ci_min[order(region_pan_coef)]
+region_pan_ci_max <- region_pan_ci_max[order(region_pan_coef)]
+region_pan_names <- region_names[order(region_pan_coef)]
+region_pan_coef <- region_pan_coef[order(region_pan_coef)]
+
+cancer_pan_coef <- coef(mod.1)[39:47]
+cancer_pan_coef['CancerTypeBreast:JustPandemic'] <- 0
+cancer_pan_ci_min <- ci[39:47,1]
+cancer_pan_ci_max <- ci[39:47,2]
+cancer_pan_ci_min['CancerTypeBreast:JustPandemic'] <- 0
+cancer_pan_ci_max['CancerTypeBreast:JustPandemic'] <- 0
+cancer_pan_ci_min <- cancer_pan_ci_min[order(cancer_pan_coef)]
+cancer_pan_ci_max <- cancer_pan_ci_max[order(cancer_pan_coef)]
+cancer_pan_coef <- cancer_pan_coef[order(cancer_pan_coef)]
+
+y_cpan <- seq(length(cancer_pan_coef))
+y_rpan <- seq(length(region_pan_coef))
+df_cpan <- data.frame(cancer_pan_coef, y_cpan, cancer_pan_ci_min, cancer_pan_ci_max)
+df_rpan <- data.frame(region_pan_coef, y_rpan, region_pan_ci_min, region_pan_ci_max)
+
+png(file="results/31_eligible_Pop_Time_Pan_HB_CT_CTPAN_HBPAN_ct.png",
+    width=600, height=350)
+plt <- ggplot(data = df_cpan ,aes(x=cancer_pan_coef, y=y_cpan)) + 
+  geom_point() + 
+  geom_errorbarh(aes(xmin=cancer_pan_ci_min, xmax=cancer_pan_ci_max))
+plt + ggtitle("Pandemic coefficients for cancer types") +
+  xlab("") + ylab("") + 
+  scale_y_continuous(breaks = y_cpan, labels = sub(':JustPandemic','',sub('CancerType','',names(cancer_pan_coef)))) +
+  theme(text = element_text(size = 18))
+dev.off()
+
+png(file="results/31_eligible_Pop_Time_Pan_HB_CT_CTPAN_HBPAN_hb.png",
+    width=600, height=350)
+plt <- ggplot(data = df_rpan ,aes(x=region_pan_coef, y=y_rpan)) + 
+  geom_point() + 
+  geom_errorbarh(aes(xmin=region_pan_ci_min, xmax=region_pan_ci_max))
+plt + ggtitle("Pandemic coefficients for regions") +
+  xlab("") + ylab("") + 
+  scale_y_continuous(breaks = y_rpan, labels = region_pan_names) +
+  theme(text = element_text(size = 18)) 
+dev.off()
+
+#--------- Let's plot normal coefficients #--------- 
 
 region_coef <- coef(mod.1)[2:14]
 region_coef['HBS08000015'] <- 0
@@ -105,7 +154,7 @@ y_can <- seq(length(cancer_coef))
 df_reg <- data.frame(region_coef, y_reg, region_ci_min, region_ci_max)
 df_can <- data.frame(cancer_coef, y_can, cancer_ci_min, cancer_ci_max)
 
-png(file="results/62_eligible_Pop_Time2_Pan2_HB_CT_reg.png",
+png(file="results/31_eligible_Pop_Time_Pan_HB_CT_CTPAN_reg.png",
     width=600, height=350)
 plt <- ggplot(data = df_reg ,aes(x=region_coef, y=y_reg)) + 
   geom_point() + 
@@ -116,7 +165,7 @@ plt + ggtitle("Coefficients for regions") +
   theme(text = element_text(size = 18))
 dev.off()
 
-png(file="results/62_eligible_Pop_Time2_Pan2_HB_CT_can.png",
+png(file="results/31_eligible_Pop_Time_Pan_HB_CT_CTPAN_can.png",
     width=600, height=350)
 plt <- ggplot(data = df_can ,aes(x=cancer_coef, y=y_can)) + 
   geom_point() + 
